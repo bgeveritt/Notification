@@ -22,5 +22,5 @@ This widget provides the functionality to display a custom message, sourced from
 
 * Alert the user of the number of open tasks in their work queue
 
-(images/getMessage.png)
-(images/message.png)
+![alt tag](images/getMessage.png)
+![alt tag](images/message.png)
