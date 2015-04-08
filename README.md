@@ -17,10 +17,3 @@ This widget provides the functionality to display a custom message, sourced from
  * *Layout* - The position of the message
  * *Type* - The appearance of the message
  * *Timeout* - How long the message should be displayed, before fading out (in milliseconds.) Set this property to *0* to render the message until it is clicked by the user
-
-# Example Usage
-
-* Alert the user of the number of open tasks in their work queue
-
-![alt tag](images/getMessage.png)
-![alt tag](images/message.png)
