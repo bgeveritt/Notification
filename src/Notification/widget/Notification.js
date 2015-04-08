@@ -1,69 +1,96 @@
-/**
- Notification
- ========================
+/*
+    Notification
+    ========================
 
- @file      : Notification.js
- @version   : 1.0
- @author    : Bailey Everitt
- @date      : 12-09-2014
- @copyright : Mendix Technology BV
- @license   : Apache License, Version 2.0, January 2004
+    @file      : Notification.js
+    @version   : 2.0
+    @author    : Bailey Everitt
+    @date      : Tue, 07 Apr 2015 17:29:58 GMT
+    @copyright : 
+    @license   : MIT License
 
- Documentation
- =============
- This widget displays a custom message to the user
- based on the noty jQuery plugin
+    Documentation
+    ========================
+    This widget shows a notification based on the noty jQuery plugin
+*/
 
- */
-dojo.provide("Notification.widget.Notification");
-dojo.require("Notification.widget.lib.jquery-1-11-1-min");
-dojo.require("Notification.widget.lib.jquery-noty-packaged-min");
+require({
+    packages: [
+        { 
+            name: 'jquery', 
+            location: '../../widgets/Notification/lib', 
+            main: 'jquery-1.11.2.min' },
+        { 
+            name: 'noty', 
+            location: '../../widgets/Notification/lib', 
+            main: 'jquery.noty.packaged.min' }
+        ]
+}, [
+    'dojo/_base/declare', 'mxui/widget/_WidgetBase', 'dijit/_TemplatedMixin',
+    'mxui/dom', 'dojo/dom', 'dojo/query', 'dojo/dom-prop', 'dojo/dom-geometry', 'dojo/dom-class', 'dojo/dom-style', 'dojo/dom-construct', 'dojo/_base/array', 'dojo/_base/lang', 'dojo/text',
+    'jquery', 'noty', 'dojo/text!Notification/widget/template/Notification.html'
+], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, domQuery, domProp, domGeom, domClass, domStyle, domConstruct, dojoArray, lang, text, $, noty, widgetTemplate) {
+    'use strict';
+    
+    return declare('Notification.widget.Notification', [ _WidgetBase, _TemplatedMixin ], {
+        
+        templateString: widgetTemplate,
 
-console.log("Notification.js");
-
-dojo.declare("Notification.widget.Notification", mxui.widget._WidgetBase, {
-
-    inputargs: {
         display: false,
         text: "",
         layout: "",
         type: "",
-        timeout: ""
+        timeout: "",
+        onclickmf: "",
 
-    },
+        _handle: null,
+        _contextObj: null,
+        _objProperty: null,
 
-    postCreate: function () {
-        console.log("Notification.js - postCreate");
-        this.actLoaded();
-    },
+        constructor: function () {
+            this._objProperty = {};
+        },
 
-    update: function(obj, callback){
-        console.log("Notification.js - update");
+        postCreate: function () {
+            console.log(this.id + '.postCreate');
+        },
 
-        var shouldDisplay = obj.get(this.display);
+        update: function (obj, callback) {
+            console.log(this.id + '.update');
 
-        if (shouldDisplay == true) {
+            if (obj != null) {
+                
+                this._contextObj = obj;
+                
+                var shouldDisplay = obj.get(this.display);
 
-            var text = obj.get(this.text);
-            var layout = this.layout;
-            var type = this.type;
-            var timeout = this.timeout;
+                if (shouldDisplay == true) {
 
-            if (timeout == "0") {
-                timeout = false
+                    var text = obj.get(this.text);
+                    var layout = this.layout;
+                    var type = this.type;
+                    var timeout = this.timeout;
+
+                    if (timeout == "0") {
+                        timeout = false
+                    }
+
+                    var n = noty({
+                        text: text,
+                        layout: layout,
+                        type: type,
+                        timeout: timeout
+                    });
+
+                }
             }
 
-            var n = noty({
-                text: text,
-                layout: layout,
-                type: type,
-                timeout: timeout
-            });
+            callback();
+        },
+
+        uninitialize: function () {
 
         }
-
-        callback && callback();
-    },
-
+        
+    });
 });
-console.log("Notification.js - init done");
