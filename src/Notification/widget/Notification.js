@@ -1,14 +1,14 @@
 /*jslint white:true, nomen: true, plusplus: true */
-/*global mx, define, require, browser, devel, console, document, jQuery */
+/*global mx, define, require, browser, devel, console, document, jQuery, noty */
 /*mendix */
 /*
     Notification
     ========================
 
     @file      : Notification.js
-    @version   : 2.0
+    @version   : 2.1
     @author    : Bailey Everitt
-    @date      : T
+    @date      : 6 June 2015
     @copyright : 2015, Mendix B.V.
     @license   : Apache v2
 
@@ -20,19 +20,17 @@
 // Required module list. Remove unnecessary modules, you can always get them back from the boilerplate.
 define([
     'dojo/_base/declare', 'mxui/widget/_WidgetBase', 'dijit/_TemplatedMixin',
-    'mxui/dom', 'dojo/dom', 'dojo/query', 'dojo/dom-prop', 'dojo/dom-geometry', 'dojo/dom-class', 'dojo/dom-style',
-    'dojo/dom-construct', 'dojo/_base/array', 'dojo/_base/lang', 'dojo/text', 'dojo/html', 'dojo/_base/event',
+    'mxui/dom', 'dojo/dom', 'dojo/_base/array', 'dojo/_base/lang', 'dojo/text', 'dojo/html',
     'Notification/lib/jquery-1.11.2.min', 'Notification/lib/jquery.noty.packaged.min',
     'dojo/text!Notification/widget/template/Notification.html'
-], function (declare, _WidgetBase, _TemplatedMixin, 
-              dom, dojoDom, domQuery, domProp, domGeom, domClass, domStyle, 
-              domConstruct, dojoArray, lang, text, html, event, 
-              _jQuery, _noty,
-              widgetTemplate) {
+], function (declare, _WidgetBase, _TemplatedMixin,
+    dom, dojoDom, dojoArray, lang, text, html,
+    _jQuery, _noty,
+    widgetTemplate) {
     'use strict';
 
     var $ = jQuery.noConflict(true);
-    
+
     // Declare widget's prototype.
     return declare('Notification.widget.Notification', [_WidgetBase, _TemplatedMixin], {
 
@@ -40,11 +38,12 @@ define([
         templateString: widgetTemplate,
 
         // Parameters configured in the Modeler.
-        displayAttr: false,
+        displayAttr: "",
         textAttr: "",
         layout: "",
         type: "",
         timeout: "",
+        mfExecute: "",
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
         _handle: null,
@@ -59,14 +58,15 @@ define([
 
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function () {
-            console.log(this.id + '.postCreate');
+            //console.log(this.id + '.postCreate');
+
             this._updateRendering();
             this._setupEvents();
         },
 
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
         update: function (obj, callback) {
-            console.log(this.id + '.update');
+            //console.log(this.id + '.update');
 
             this._contextObj = obj;
             this._resetSubscriptions();
@@ -95,29 +95,34 @@ define([
         // Rerender the interface.
         _updateRendering: function () {
             if (this._contextObj !== null) {
-                
-                var shouldDisplay = this._contextObj.get(this.displayAttr);
 
-                if (shouldDisplay == true) {
-                    domStyle.set(this.domNode, 'display', 'block');
-                    
-                    var text = this._contextObj.get(this.textAttr);
-                    var layout = this.layout;
-                    var type = this.type;
-                    var timeout = this.timeout;
+                if (this._notyNode) {
+                    this._notyNode.close();
+                }
 
-                    if (timeout == "0") {
-                        timeout = false
+                var shouldDisplay = this._contextObj.get(this.displayAttr),
+                    layout = this.layout,
+                    type = this.type,
+                    timeout = this.timeout,
+                    text;
+
+                if (shouldDisplay) {
+                    text = this._contextObj.get(this.textAttr);
+
+                    if (timeout === "0") {
+                        timeout = false;
                     }
 
                     this._notyNode = noty({
                         text: text,
                         layout: layout,
                         type: type,
-                        timeout: timeout
+                        timeout: timeout,
+                        callback: {
+                            onClose: lang.hitch(this, this.executeMF)
+                        }
+
                     });
-                } else if (this._notyNode) {
-                    this._notyNode.close();
                 }
             } else if (this._notyNode) {
                 this._notyNode.close();
@@ -164,6 +169,21 @@ define([
                 });
 
                 this._handles = [_objectHandle, _displayAttrHandle, _textAttrHandle];
+            }
+        },
+
+        executeMF: function (obj) {
+            if (this.mfExecute !== "") {
+                mx.data.action({
+                    params: {
+                        applyto: 'selection',
+                        actionname: this.mfExecute,
+                        guids: [this._contextObj.getGuid()]
+                    },
+                    error: function (error) {
+                        console.log(error.description);
+                    }
+                }, this);
             }
         }
     });

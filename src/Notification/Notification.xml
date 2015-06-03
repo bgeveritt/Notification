@@ -56,7 +56,13 @@
             <caption>Timeout</caption>
             <category>Notification</category>
             <description>Dismiss the notification after a certain interval (milliseconds.) Enter 0 to dismiss the notification only on click</description>
-        </property>      
+        </property>
+        <property key="mfExecute" type="microflow" required="false">
+            <caption>On Close</caption>
+            <category>Events</category>
+            <description>Microflow trigger on close, either through a click or the timeout of the notification.</description>
+            <returnType type="Void"></returnType>
+        </property>
     </properties>
 </widget>
 
