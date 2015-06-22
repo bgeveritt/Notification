@@ -6,7 +6,7 @@
     ========================
 
     @file      : Notification.js
-    @version   : 2.1
+    @version   : 3.0
     @author    : Bailey Everitt
     @date      : 6 June 2015
     @copyright : 2015, Mendix B.V.
@@ -21,7 +21,7 @@
 define([
     'dojo/_base/declare', 'mxui/widget/_WidgetBase', 'dijit/_TemplatedMixin',
     'mxui/dom', 'dojo/dom', 'dojo/_base/array', 'dojo/_base/lang', 'dojo/text', 'dojo/html',
-    'Notification/lib/jquery-1.11.2.min', 'Notification/lib/jquery.noty.packaged.min',
+    'Notification/lib/jquery-1.11.2', 'Notification/lib/jquery.noty.packaged.min',
     'dojo/text!Notification/widget/template/Notification.html'
 ], function (declare, _WidgetBase, _TemplatedMixin,
     dom, dojoDom, dojoArray, lang, text, html,
@@ -29,7 +29,7 @@ define([
     widgetTemplate) {
     'use strict';
 
-    var $ = jQuery.noConflict(true);
+    var $ = _jQuery.noConflict(true);
 
     // Declare widget's prototype.
     return declare('Notification.widget.Notification', [_WidgetBase, _TemplatedMixin], {
@@ -43,7 +43,8 @@ define([
         layout: "",
         type: "",
         timeout: "",
-        mfExecute: "",
+        mfOnClose: "",
+        mfOnCloseClick: "",
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
         _handle: null,
@@ -119,7 +120,8 @@ define([
                         type: type,
                         timeout: timeout,
                         callback: {
-                            onClose: lang.hitch(this, this.executeMF)
+                            onClose: lang.hitch(this, this._onClose),
+                            onCloseClick: lang.hitch(this, this._onCloseClick)
                         }
 
                     });
@@ -172,12 +174,27 @@ define([
             }
         },
 
-        executeMF: function (obj) {
-            if (this.mfExecute !== "") {
+        _onClose: function (obj) {
+            if (this.mfOnClose !== "") {
                 mx.data.action({
                     params: {
                         applyto: 'selection',
-                        actionname: this.mfExecute,
+                        actionname: this.mfOnClose,
+                        guids: [this._contextObj.getGuid()]
+                    },
+                    error: function (error) {
+                        console.log(error.description);
+                    }
+                }, this);
+            }
+        },
+        
+        _onCloseClick: function (obj) {
+            if (this.mfOnCloseClick !== "") {
+                mx.data.action({
+                    params: {
+                        applyto: 'selection',
+                        actionname: this.mfOnCloseClick,
                         guids: [this._contextObj.getGuid()]
                     },
                     error: function (error) {
