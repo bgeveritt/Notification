@@ -22,40 +22,29 @@
                 <attributeType name="String"/>
             </attributeTypes>
         </property>
-        <property key="layout" type="enumeration" required="true" defaultValue="top">
-            <caption>Layout</caption>
-            <category>Notification</category>
-            <description>The location to render the notification</description>
-            <enumerationValues>
-                <enumerationValue key="top">Top</enumerationValue>
-                <enumerationValue key="topLeft">Top Left</enumerationValue>
-                <enumerationValue key="topCenter">Top Center</enumerationValue>
-                <enumerationValue key="topRight">Top Right</enumerationValue>
-                <enumerationValue key="center">Center</enumerationValue>
-                <enumerationValue key="centerLeft">Center Left</enumerationValue>
-                <enumerationValue key="centerRight">Center Right</enumerationValue>
-                <enumerationValue key="bottom">Bottom</enumerationValue>
-                <enumerationValue key="bottomLeft">Bottom Left</enumerationValue>
-                <enumerationValue key="bottomCenter">Bottom Center</enumerationValue>
-                <enumerationValue key="bottomRight">Bottom Right</enumerationValue>
-            </enumerationValues>
-        </property>
-        <property key="type" type="enumeration" required="true" defaultValue="alert">
+       <property key="typeAttr" type="attribute">
             <caption>Type</caption>
             <category>Notification</category>
-            <description>The type of notification to render</description>
-            <enumerationValues>
-                <enumerationValue key="alert">Alert</enumerationValue>
-                <enumerationValue key="success">Success</enumerationValue>
-                <enumerationValue key="error">Error</enumerationValue>
-                <enumerationValue key="warning">Warning</enumerationValue>
-                <enumerationValue key="information">Information</enumerationValue>
-            </enumerationValues>
+            <description>The type of notification to render (alert,success,error,warning,information)</description>
+			 <attributeTypes>
+                <attributeType name="String"/>
+            </attributeTypes>
         </property>
-        <property key="timeout" type="string" required="true" defaultValue="0">
+		 <property key="layoutAttr" type="attribute">
+            <caption>Layout</caption>
+            <category>Notification</category>
+            <description>The location to render the notification (top,topLeft,topCenter,topRight,center,centerLeft,centerRight,bottom,bottomLeft,bottomCenter,bottomRight)</description>
+            <attributeTypes>
+                <attributeType name="String"/>
+            </attributeTypes>
+        </property>
+		<property key="timeoutAttr" type="attribute">
             <caption>Timeout</caption>
             <category>Notification</category>
             <description>Dismiss the notification after a certain interval (milliseconds.) Enter 0 to dismiss the notification only on click</description>
+            <attributeTypes>
+                <attributeType name="Long"/>
+            </attributeTypes>
         </property>
         <property key="mfOnClose" type="microflow" required="false">
             <caption>On Close</caption>
@@ -71,4 +60,3 @@
         </property>
     </properties>
 </widget>
-
