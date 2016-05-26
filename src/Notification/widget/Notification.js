@@ -40,9 +40,9 @@ define([
         // Parameters configured in the Modeler.
         displayAttr: "",
         textAttr: "",
-        layout: "",
-        type: "",
-        timeout: "",
+        layoutAttr: "",
+        typeAttr: "",
+        timeoutAttr: "",
         mfOnClose: "",
         mfOnCloseClick: "",
 
@@ -102,14 +102,18 @@ define([
                 }
 
                 var shouldDisplay = this._contextObj.get(this.displayAttr),
-                    layout = this.layout,
-                    type = this.type,
-                    timeout = this.timeout,
+                    layout,
+                    type,
+                    timeout,
                     text;
 
                 if (shouldDisplay) {
                     text = this._contextObj.get(this.textAttr);
-
+					type = this._contextObj.get(this.typeAttr);
+					layout = this._contextObj.get(this.layoutAttr);
+					timeout = this._contextObj.get(this.timeoutAttr);
+					
+					
                     if (timeout === "0") {
                         timeout = false;
                     }
@@ -135,7 +139,10 @@ define([
         _resetSubscriptions: function () {
             var _objectHandle = null,
                 _displayAttrHandle = null,
-                _textAttrHandle = null;
+                _textAttrHandle = null,
+				_typeAttrHandle = null,
+				_layoutAttrHandle = null,
+				_timeoutAttrHandle = null;
 
             // Release handles on previous object, if any.
             if (this._handles) {
@@ -169,8 +176,32 @@ define([
                         this._updateRendering();
                     })
                 });
+				
+				 _typeAttrHandle = this.subscribe({
+                    guid: this._contextObj.getGuid(),
+                    attr: this.typeAttr,
+                    callback: lang.hitch(this, function (guid, attr, attrValue) {
+                        this._updateRendering();
+                    })
+                });
+				
+				 _layoutAttrHandle = this.subscribe({
+                    guid: this._contextObj.getGuid(),
+                    attr: this.typeAttr,
+                    callback: lang.hitch(this, function (guid, attr, attrValue) {
+                        this._updateRendering();
+                    })
+                });
+				
+				 _timeoutAttrHandle = this.subscribe({
+                    guid: this._contextObj.getGuid(),
+                    attr: this.typeAttr,
+                    callback: lang.hitch(this, function (guid, attr, attrValue) {
+                        this._updateRendering();
+                    })
+                });
 
-                this._handles = [_objectHandle, _displayAttrHandle, _textAttrHandle];
+                this._handles = [_objectHandle, _displayAttrHandle, _textAttrHandle, _typeAttrHandle, _layoutAttrHandle ,_timeoutAttrHandle];
             }
         },
 
